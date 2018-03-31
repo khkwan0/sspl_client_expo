@@ -34,19 +34,20 @@ class PlayerPicker extends Component {
     this.props.closePlayerPicker()
   }
 
-  render() {      
+  render() {    
     var players = this.props.team.teamPlayers
     console.log(players)
     var pickerItems = []
     players.map((playerId, i) => {
       let player = this.props.players.getPlayer(playerId)
+      console.log(player)
       var playerName = ''
       if (player) {
         playerName = player.playerName
+        pickerItems.push(
+          <Picker.Item key={i} value={player.playerId} label={playerName} />
+        )
       }
-      pickerItems.push(
-        <Picker.Item key={i} value={player.playerId} label={playerName} />
-      )
     })
     return(
       <Modal animationType='slide' visible={this.state.showModal} onRequestClose={this.closeModal}>
@@ -56,7 +57,7 @@ class PlayerPicker extends Component {
               <Button onPress={this.closeModal} title="Cancel" />
               <Button onPress={this.selectPlayer} title="Done" />
             </View>
-            <Picker selectedValue={this.selectedValue} onValueChange={this.updatePlayer}>
+            <Picker selectedValue={this.state.selectedValue} onValueChange={this.updatePlayer}>
               <Picker.Item value={-1} label="Choose A Player" />
               {pickerItems}
               <Picker.Item value={-2} label="Add new Player" />

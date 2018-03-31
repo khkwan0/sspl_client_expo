@@ -6,9 +6,9 @@ class Teams {
   }
 
   getTeam(teamId) {
-    i = 0
-    found = false
-    rv = null
+    let i = 0
+    let found = false
+    let rv = null
 
     while (i < this.teams.length && !found) {
       if (this.teams[i].teamId == teamId) {

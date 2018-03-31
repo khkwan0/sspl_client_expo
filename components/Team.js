@@ -10,24 +10,35 @@ class Team {
   }  
 
   addPlayer(playerId) {
-    this.teamPlayers.push(playerId)
-    fetch(Config.server + '/team/players?teamId=' + this.teamId + '&season=' + this.season,
-    { 
-      method: 'POST',
-      body: JSON.stringify({players: this.teamPlayers}),
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+    let i = 0
+    let found = false
+    while (i < this.teamPlayers.length) {
+      if (this.teamPlayers[i] == playerId) {
+        found = true
       }
-    })
-    .then((result) => result.json())
-    .then((resultJson) => {
-      console.log(resultJson)
-    })
-    .catch((err) => {
-      console.log(err)
-    })    
+      i++
+    }
+    console.log('TEAM: addPlayer - ' + !found)
+    if (!found) {
+      this.teamPlayers.push(playerId)
+      fetch(Config.server + '/team/players?teamId=' + this.teamId + '&season=' + this.season,
+      { 
+        method: 'POST',
+        body: JSON.stringify({players: this.teamPlayers}),
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((result) => result.json())
+      .then((resultJson) => {
+        console.log(resultJson)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+   }
   }
 
   getPlayers() {

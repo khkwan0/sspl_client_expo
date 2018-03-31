@@ -166,10 +166,12 @@ class Match extends Component {
   }
 
   getPlayerDataByTeam(teamId) {  
+    console.log('getPlayerDataByTeam('+teamId+')')
     return new Promise((resolve, reject) => {
       fetch(Config.server + '/players/' + teamId)
       .then((results) => results.json())
       .then((resultJson) => {
+
         if (typeof resultJson.players != 'undefined' && resultJson.players) {
           resolve(resultJson.players)  
         }
@@ -182,20 +184,22 @@ class Match extends Component {
   }
 
   getPlayerDataRemote() {
+    console.log('getplayerdataremote')
     return new Promise((resolve, reject) => {
       toPromise = []
       toPromise.push(this.getPlayerDataByTeam(this.state.homeTeam.teamId))
       toPromise.push(this.getPlayerDataByTeam(this.state.awayTeam.teamId))
       Promise.all(toPromise)
       .then((_players) => {
-        _players[0].forEach((players) => {          
-          //console.log(players)
-          if (players.length) {
-            players.forEach((player) => {
-              this.players.addPlayer(player._id, player.playerName)
-            })
-          }          
-        })        
+        if (_players.length) {
+          _players.forEach((team) => {
+            if (team.length) {
+              team.forEach((player) => {
+                this.players.addPlayer(player[0]._id, player[0].playerName)
+              })
+            }
+          })
+        }
         resolve(this.players)
       })
       .catch((err) => {

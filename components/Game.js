@@ -30,7 +30,7 @@ class Game extends Component {
 
   choosePlayer(isHome, isTop) {
     if (!this.props.inComplete) {
-      team = isHome ? this.homeTeam: this.awayTeam
+      let team = isHome ? this.homeTeam: this.awayTeam
       this.playerPickerIsTop = isTop
       this.playerPickerIsHome = isHome
       this.playerPickerTeam = team
@@ -49,19 +49,22 @@ class Game extends Component {
   }
 
   addNewPlayer(player) {
-    if (this.playerPickerIsHome) {
-      this.homeTeam.addPlayer(player.playerId)      
-    } else {
-      this.awayTeam.addPlayer(player.playerId)
+    if (player) {
+      if (this.playerPickerIsHome) {
+        this.homeTeam.addPlayer(player.playerId)      
+      } else {
+        this.awayTeam.addPlayer(player.playerId)
+      }
+      this.props.players.addPlayer(player.playerId, player.playerName)
+      console.log(this.props.players)
+      this.setPlayer(player.playerId)
     }
-    this.setPlayer(player.playerId)
   }
 
   setPlayer(playerId) {
     if (!this.props.isComplete) {
       if (this.playerPickerIsHome) {
         if (this.playerPickerIsTop) {
-          console.log('here')
           this.homePlayers[0] = playerId
         } else {
           this.homePlayers[1] = playerId
@@ -112,6 +115,8 @@ class Game extends Component {
   }
 
   render() {
+    console.log('Game: this.props.players')
+    console.log(this.props.players)
     let homeA = ''
     let homeB = ''
     let awayA = ''
