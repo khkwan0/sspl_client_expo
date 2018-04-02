@@ -54,6 +54,7 @@ class Set extends Component {
           gameNo={this.props.startingGameNo + i}
           isComplete={this.props.isComplete} 
           nameSearch={this.props.nameSearch}
+          myTeamId={this.props.myTeamId}
         />
         )
     }

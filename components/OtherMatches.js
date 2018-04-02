@@ -114,13 +114,13 @@ class OtherMatches extends Component {
 
   byTeamHandler() {
     if (this.matchData) {
-      this.props.navigation.navigate('BrowseMatches', {teams: this.teams, matches: this.matchData, groupBy: 'team'})
+      this.props.navigation.navigate('BrowseMatches', {teams: this.teams, matches: this.matchData, groupBy: 'team', myTeamId: this.props.navigation.state.params.myTeamId})
     }
   }
 
   byDateHandler() {
     if (this.matchData) {
-      this.props.navigation.navigate('BrowseMatches', {teams: this.teams, matches: this.matchData, groupBy: 'date'})
+      this.props.navigation.navigate('BrowseMatches', {teams: this.teams, matches: this.matchData, groupBy: 'date', myTeamId: this.props.navigation.state.params.myTeamId})
     }
   }
 

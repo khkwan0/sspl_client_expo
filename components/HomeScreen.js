@@ -239,6 +239,13 @@ class HomeScreen extends Component {
   }
 
   componentDidMount() {
+    AsyncStorage.getAllKeys()
+    .then((keys) => {
+      console.log(keys)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
     rv = false
     console.log('ping')
     fetch(Config.server + '/ping')

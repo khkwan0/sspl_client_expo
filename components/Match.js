@@ -292,6 +292,8 @@ class Match extends Component {
   }
 
   render() {
+    let homeTeam = this.props.navigation.state.params.homeTeam
+    let awayTeam = this.props.navigation.state.params.awayTeam
     if (this.state.matchType == 'nine') {
       toRender = (
         <View>
@@ -326,6 +328,7 @@ class Match extends Component {
             startingGameNo={1}
             isComplete={this.state.isComplete}
             nameSearch={this.nameSearch}
+            myTeamId={this.myTeamId}
             />
           <Set
             setGameData={this.setGameData}
@@ -339,6 +342,7 @@ class Match extends Component {
             startingGameNo={5}
             isComplete={this.state.isComplete}
             nameSearch={this.nameSearch}
+            myTeamId={this.myTeamId}
             />
           <Set 
             setGameData={this.setGameData}
@@ -352,6 +356,7 @@ class Match extends Component {
             startingGameNo={13}
             isComplete={this.state.isComplete}
             nameSearch={this.nameSearch}
+            myTeamId={this.myTeamId}
             />
           <Set
             setGameData={this.setGameData}
@@ -365,6 +370,7 @@ class Match extends Component {
             startingGameNo={17}
             isComplete={this.state.isComplete}
             nameSearch={this.nameSearch}
+            myTeamId={this.myTeamId}
             />
           <Set 
             setGameData={this.setGameData}
@@ -378,6 +384,7 @@ class Match extends Component {
             startingGameNo={25}
             isComplete = {this.state.isComplete}
             nameSearch={this.nameSearch}
+            myTeamId={this.myTeamId}
             />
           <Set
             setGameData={this.setGameData}
@@ -391,6 +398,7 @@ class Match extends Component {
             startingGameNo={33}
             isComplete={this.state.isComplete}
             nameSearch={this.nameSearch}
+            myTeamId={this.myTeamId}
             />                        
         </View>
       )
@@ -406,7 +414,7 @@ class Match extends Component {
       awayTeamString = this.state.awayCaptainSubmit? 'AWAY team HAS signed this scoresheet': 'Waiting for AWAY team to sign this score sheet'
       homeTeamString = this.state.homeCaptainSubmit? 'HOME team HAS signed this scoresheet': 'HOME TEAM - Press here to sign this scoresheet'
       
-      toConfirm = (
+      var toConfirm = (
         <View style={{marginTop: 20}}>
           <View style={{backgroundColor: homeConfirmBackgroundColor, borderRadius: 10, borderWidth: 1}}>
             <TouchableHighlight onPress={this.homeTeamSubmit}>
@@ -424,11 +432,11 @@ class Match extends Component {
       )
     }
     if (this.myTeamId == awayTeam.teamId) {
-      homeConfirmBackgroundColor = this.state.homeCaptainSubmit? 'green' : 'white'
-      awayConfirmBackgroundColor = this.state.awayCaptainSubmit? 'green' : 'white'
+      homeConfirmBackgroundColor = this.state.homeCaptainSubmit? 'green' : 'yellow'
+      awayConfirmBackgroundColor = this.state.awayCaptainSubmit? 'green' : 'yellow'
       awayTeamString = this.state.awayCaptainSubmit? 'AWAY team HAS signed this scoresheet': 'AWAY TEAM - Press here to sign this scoresheet'
       homeTeamString = this.state.homeCaptainSubmit? 'HOME team HAS signed this scoresheet': 'Waiting for HOME team to sign this scoresheet'
-      toConfirm = (
+      var toConfirm = (
         <View>
           <View style={{backgroundColor: awayConfirmBackgroundColor, borderRadius:10, borderWidth: 1, paddingLeft: 10}}>
             <TouchableHighlight onPress={this.awayTeamSubmit}>

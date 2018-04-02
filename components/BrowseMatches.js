@@ -73,12 +73,12 @@ class BrowseMatches extends Component {
 
   browseTeamMatches(index) {    
     chosenTeam = this.teams.getTeams()[index]
-    this.props.navigation.navigate('BrowseTeamMatches', {teams: this.teams, matches: this.state.matchesByTeams, chosenIndex: {type: 'team', teamId: chosenTeam.teamId}})
+    this.props.navigation.navigate('BrowseTeamMatches', {teams: this.teams, matches: this.state.matchesByTeams, chosenIndex: {type: 'team', teamId: chosenTeam.teamId}, myTeamId: this.props.navigation.state.params.myTeamId})
   }
 
   browseDateMatches(aDate) {
     console.log(aDate)
-    this.props.navigation.navigate('BrowseTeamMatches', {teams: this.teams, matches: this.state.matchesByDates, chosenIndex: {type: 'date', date: aDate}})
+     this.props.navigation.navigate('BrowseTeamMatches', {teams: this.teams, matches: this.state.matchesByDates, chosenIndex: {type: 'date', date: aDate}, myTeamId: this.props.navigation.state.params.myTeamId})
   }
 
   render() {

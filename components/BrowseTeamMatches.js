@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {ScrollView, Text, View} from 'react-native'
+import {ScrollView, Text, View, TouchableHighlight} from 'react-native'
 
 class BrowseTeamMatches extends Component {
 
@@ -15,6 +15,13 @@ class BrowseTeamMatches extends Component {
 
     let chosenIndex = this.props.navigation.state.params.chosenIndex
     this.props.navigation.setParams({otherParam: chosenIndex.type == 'team'? this.teams.getTeam(chosenIndex.teamId).teamName : new Date(chosenIndex.date).toDateString()})
+
+    this.showMatch = this.showMatch.bind(this)
+  }
+
+  showMatch(matchData, homeTeam, awayTeam) {
+    matchData.matchDate = new Date(matchData.matchDate)
+    this.props.navigation.navigate('Match', {matchData: matchData, homeTeam: homeTeam, awayTeam: awayTeam, myTeamId: this.props.navigation.state.params.myTeamId})
   }
 
   render() {
@@ -33,17 +40,17 @@ class BrowseTeamMatches extends Component {
       if (awayTeam && homeTeam) {
         rows.push(
           <View key={key} style={{borderRadius:10, borderWidth: 1}}>
-            <View>
-              <Text>
-                {matchDate}
-              </Text>
+            <TouchableHighlight onPress={()=>this.showMatch(match, homeTeam, awayTeam)}>
+              <View>
+                <Text>
+                  {matchDate}
+                </Text>
+                <Text style={{fontSize:26, paddingLeft:10, paddingRight:10}}>
+                  {awayTeam.teamName} VS @{homeTeam.teamName}
+                </Text>
             </View>
-            <View>
-              <Text style={{fontSize:26, paddingLeft:10, paddingRight:10}}>
-                {awayTeam.teamName} VS @{homeTeam.teamName}
-              </Text>
+            </TouchableHighlight>
           </View>
-        </View>
         )
       }
     }

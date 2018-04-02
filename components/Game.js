@@ -29,15 +29,17 @@ class Game extends Component {
   }
 
   choosePlayer(isHome, isTop) {
-    if (!this.props.inComplete) {
-      let team = isHome ? this.homeTeam: this.awayTeam
-      this.playerPickerIsTop = isTop
-      this.playerPickerIsHome = isHome
-      this.playerPickerTeam = team
+    if (this.props.myTeamId == this.props.awayTeam.teamId || this.props.myTeamId == this.props.homeTeam.teamId) {
+      if (!this.props.inComplete) {
+        let team = isHome ? this.homeTeam: this.awayTeam
+        this.playerPickerIsTop = isTop
+        this.playerPickerIsHome = isHome
+        this.playerPickerTeam = team
 
-      this.setState({
-        showPlayerPicker: true
-      })
+        this.setState({
+          showPlayerPicker: true
+        })
+      }
     }
   }
 
@@ -88,18 +90,20 @@ class Game extends Component {
   }
 
   setWinner(winner) {
-    if (this.winner == winner) {
-      winner = 'na'
+    if (this.props.myTeamId == this.props.awayTeam.teamId || this.props.myTeamId == this.props.homeTeam.teamId) {
+      if (this.winner == winner) {
+        winner = 'na'
+      }
+      this.winner = winner
+      let gameData = {
+        gameNo: this.props.gameNo,
+        homePlayers: this.homePlayers,
+        awayPlayers: this.awayPlayers,
+        setNo: this.props.setNo,
+        winner: this.winner
+      }
+      this.props.setGameData(gameData)
     }
-    this.winner = winner
-    let gameData = {
-      gameNo: this.props.gameNo,
-      homePlayers: this.homePlayers,
-      awayPlayers: this.awayPlayers,
-      setNo: this.props.setNo,
-      winner: this.winner
-    }
-    this.props.setGameData(gameData)
   }
 
   closePlayerPicker() {
@@ -115,8 +119,6 @@ class Game extends Component {
   }
 
   render() {
-    console.log('Game: this.props.players')
-    console.log(this.props.players)
     let homeA = ''
     let homeB = ''
     let awayA = ''
