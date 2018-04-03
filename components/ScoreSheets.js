@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {ScrollView, View, AsyncStorage, TouchableHighlight, Text, ActivityIndicator} from 'react-native'
+import {ScrollView, View, AsyncStorage, TouchableHighlight, Text, ActivityIndicator, ImageBackground} from 'react-native'
 import Config from './Config'
 
 class ScoreSheets extends Component {
@@ -122,12 +122,12 @@ class ScoreSheets extends Component {
               <TouchableHighlight onPress={()=>this.handleScoreSheetChosenBtn(aMatch)}>
                 <View>                
                   <View>
-                    <Text>
+                    <Text style={{color:'white'}}>
                       {aMatch.matchDate.toDateString()}
                     </Text>
                   </View>
                   <View>
-                    <Text style={{fontSize:26, paddingLeft:10, paddingRight:10}}>
+                    <Text style={{color:'white', fontSize:26, paddingLeft:10, paddingRight:10}}>
                       {gameTitle}
                     </Text>
                   </View>
@@ -163,19 +163,21 @@ class ScoreSheets extends Component {
       })
     }
     return(
-      <ScrollView>
-        <View>
-          <View style={{flex:1, flexDirection: 'row', justifyContent:'center'}}>
-            <Text style={{fontWeight: 'bold', fontSize: 24}}>Today: {today.toDateString()}</Text>
+      <ImageBackground source={require('../assets/chalk.png')} style={{width: '100%', height: '100%'}}>
+        <ScrollView>
+          <View>
+            <View style={{flex:1, flexDirection: 'row', justifyContent:'center'}}>
+              <Text style={{color:'white', fontWeight: 'bold', fontSize: 24}}>Today: {today.toDateString()}</Text>
+            </View>
           </View>
-        </View>
-        <View>
-          <ActivityIndicator size="large" color="#0000ff" animating={this.state.pressed} />
-        </View>
-        <View style={{marginTop:20}}>              
-          {rows}
-        </View>
-      </ScrollView>
+          <View>
+            <ActivityIndicator size="large" color="#0000ff" animating={this.state.pressed} />
+          </View>
+          <View style={{marginTop:20}}>              
+            {rows}
+          </View>
+        </ScrollView>
+      </ImageBackground>
     )
   }
 }

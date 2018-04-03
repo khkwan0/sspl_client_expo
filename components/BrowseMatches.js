@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {ScrollView, View, Text, TouchableHighlight} from 'react-native'
+import {ScrollView, View, Text, TouchableHighlight, ImageBackground} from 'react-native'
 import BrowseTeamMatches from './BrowseTeamMatches';
 
 class BrowseMatches extends Component {
@@ -87,8 +87,8 @@ class BrowseMatches extends Component {
       for(let key in this.teams.getTeams()) {
         rows.push(
           <TouchableHighlight key={this.teams.getTeams()[key].teamName} onPress={()=>this.browseTeamMatches(key)} style={{paddingTop:10}}>
-            <View style={{borderRadius:10, borderWidth: 1}}>
-              <Text style={{fontSize:26, paddingLeft:10, paddingRight:10}}>
+            <View style={{borderColor:'white', borderRadius:10, borderWidth: 1}}>
+              <Text style={{color:'white', fontSize:26, paddingLeft:10, paddingRight:10}}>
                 {this.teams.getTeams()[key].teamName}    
               </Text>
             </View>
@@ -100,8 +100,8 @@ class BrowseMatches extends Component {
      for (let aDate in this.state.matchesByDates) {
        rows.push(
         <TouchableHighlight key={aDate} onPress={()=>this.browseDateMatches(aDate)} style={{paddingTop:10}}>
-          <View style={{borderRadius:10, borderWidth: 1}}>
-            <Text style={{fontSize:26, paddingLeft:10, paddingRight:10}}>
+          <View style={{borderColor:'white',borderRadius:10, borderWidth: 1}}>
+            <Text style={{color: 'white', fontSize:26, paddingLeft:10, paddingRight:10}}>
               {new Date(aDate).toDateString()}    
             </Text>
           </View>
@@ -110,9 +110,11 @@ class BrowseMatches extends Component {
      } 
     }
     return(
-      <ScrollView>
-        {rows}
-      </ScrollView>
+      <ImageBackground source={require('../assets/bridge.png')} style={{width:'100%', height: '100%'}}>
+        <ScrollView>
+          {rows}
+        </ScrollView>
+      </ImageBackground>
     )
   }
 }

@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {View, TouchableHighlight, Text, AsyncStorage} from 'react-native'
+import {View, TouchableHighlight, Text, AsyncStorage, ImageBackground} from 'react-native'
 import Config from './Config'
 
 class OtherMatches extends Component {
@@ -126,6 +126,7 @@ class OtherMatches extends Component {
 
   render() {
     return (
+      <ImageBackground source={require('../assets/cue.png')} style={{width:'100%', height: '100%'}}>
       <View>
         {this.state.errMsg != '' &&
           <View>
@@ -135,15 +136,15 @@ class OtherMatches extends Component {
         {this.state.matchDataLoaded &&
           <View>
             <TouchableHighlight onPress={this.byTeamHandler} style={{paddingTop:10}}>
-              <View style={{borderRadius:10, borderWidth: 1}}>
-                <Text style={{fontSize:26, paddingLeft:10, paddingRight:10}}>
+              <View style={{borderColor: 'white', borderRadius:10, borderWidth: 1}}>
+                <Text style={{color: 'white', fontSize:26, paddingLeft:10, paddingRight:10}}>
                   By Team
                 </Text>
               </View>
             </TouchableHighlight>
             <TouchableHighlight onPress={this.byDateHandler} style={{paddingTop:10}}>
-              <View style={{borderRadius:10, borderWidth: 1}}>
-                <Text style={{fontSize:26, paddingLeft:10, paddingRight:10}}>
+              <View style={{borderColor:'white', borderRadius:10, borderWidth: 1}}>
+                <Text style={{color: 'white', fontSize:26, paddingLeft:10, paddingRight:10}}>
                   By Date
                 </Text>
               </View>
@@ -151,6 +152,7 @@ class OtherMatches extends Component {
           </View>
         }
       </View>
+      </ImageBackground>
     )
   }
 }

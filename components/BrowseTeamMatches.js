@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {ScrollView, Text, View, TouchableHighlight} from 'react-native'
+import {ScrollView, Text, View, TouchableHighlight, ImageBackground} from 'react-native'
 
 class BrowseTeamMatches extends Component {
 
@@ -39,13 +39,13 @@ class BrowseTeamMatches extends Component {
       matchDate = new Date(match.matchDate).toDateString()
       if (awayTeam && homeTeam) {
         rows.push(
-          <View key={key} style={{borderRadius:10, borderWidth: 1}}>
+          <View key={key} style={{borderColor: 'white', borderRadius:10, borderWidth: 1}}>
             <TouchableHighlight onPress={()=>this.showMatch(match, homeTeam, awayTeam)}>
               <View>
-                <Text>
+                <Text style={{color: 'white'}}>
                   {matchDate}
                 </Text>
-                <Text style={{fontSize:26, paddingLeft:10, paddingRight:10}}>
+                <Text style={{color: 'white', fontSize:26, paddingLeft:10, paddingRight:10}}>
                   {awayTeam.teamName} VS @{homeTeam.teamName}
                 </Text>
             </View>
@@ -54,10 +54,12 @@ class BrowseTeamMatches extends Component {
         )
       }
     }
-    return(      
-      <ScrollView>
-        {rows}
-      </ScrollView>
+    return(
+      <ImageBackground source={require('../assets/chalk.png')} style={{width: '100%', height: '100%'}}>
+        <ScrollView>
+          {rows}
+        </ScrollView>
+      </ImageBackground>
     )
   }
 }
