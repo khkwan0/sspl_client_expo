@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {View, Button, Text, AsyncStorage, TouchableHighlight, Modal} from 'react-native'
+import {View, Button, Text, AsyncStorage, TouchableHighlight, Modal, ImageBackground} from 'react-native'
 import Team from './Team'
 import Teams from './Teams'
 import Player from './Player'
@@ -294,48 +294,50 @@ class HomeScreen extends Component {
   render() {
     const team = this.state.teamName
     return (
-      <View style={{flex: 1, flexDirection:'column'}}>
-        {!this.state.serverAlive &&      
-          <View style={{flex: 1, flexDirection: 'row', justifyContent:'center'}}>
-            <View>
-              <Text style={{backgroundColor:'red', color: 'white'}}>Server is currently down.  Data will be saved on your device</Text>
+      <ImageBackground source={require('../assets/splash.png')} style={{width: '100%', height: '100%'}}>
+        <View style={{flex: .5, flexDirection:'column'}}>
+          {!this.state.serverAlive &&      
+            <View style={{flex: 1, flexDirection: 'row', justifyContent:'center'}}>
+              <View>
+                <Text style={{backgroundColor:'red', color: 'white'}}>Server is currently down.  Data will be saved on your device</Text>
+              </View>
             </View>
+          }
+          <View style={{flex: .5, justifyContent:'flex-start', alignItems:'center',marginTop:100}}>
+            <Text style={{fontSize: 24, color:'white'}}>Team: {team}</Text>      
           </View>
-        }
-        <View style={{flex: 1, justifyContent:'flex-start', alignItems:'center',marginTop:100}}>
-          <Text style={{fontSize: 24}}>Team: {team}</Text>      
+          <View style={{flex: .5, justifyContent:'flex-start', alignItems:'center'}}>
+            <TouchableHighlight onPress={this.scoreSheetsBtnHandler} style={{paddingTop:10}}>
+              <View style={{borderColor: 'white', borderRadius:10, borderWidth: 1}}>
+                <Text style={{color:'white', fontSize:26, paddingLeft:10, paddingRight:10}}>
+                  Score Sheets
+                </Text>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight onPress={this.otherMatchesBtnHandler} style={{paddingTop:10}}>
+              <View style={{borderColor:'white', borderRadius:10, borderWidth: 1}}>
+                <Text style={{color:'white', fontSize:26, paddingLeft:10, paddingRight:10}}>
+                  Browse Matches
+                </Text>
+              </View>
+            </TouchableHighlight>          
+            <TouchableHighlight onPress={this.archivesBtnHandler} style={{paddingTop:10}}>
+              <View style={{borderColor:'white', borderRadius:10, borderWidth: 1}}>
+                <Text style={{color:'white',fontSize:26, paddingLeft:10, paddingRight:10}}>
+                  Archives
+                </Text>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight onPress={this.changeTeamHandler} style={{paddingTop:10}}>
+              <View style={{borderColor:'white', borderRadius:10, borderWidth: 1}}>
+                <Text style={{color:'white',fontSize:26, paddingLeft:10, paddingRight:10}}>
+                  Change Team
+                </Text>
+              </View>
+            </TouchableHighlight>          
+          </View>
         </View>
-        <View style={{flex: 1, justifyContent:'flex-start', alignItems:'center'}}>
-          <TouchableHighlight onPress={this.scoreSheetsBtnHandler} style={{paddingTop:10}}>
-            <View style={{borderRadius:10, borderWidth: 1}}>
-              <Text style={{fontSize:26, paddingLeft:10, paddingRight:10}}>
-                Score Sheets
-              </Text>
-            </View>
-          </TouchableHighlight>
-          <TouchableHighlight onPress={this.otherMatchesBtnHandler} style={{paddingTop:10}}>
-            <View style={{borderRadius:10, borderWidth: 1}}>
-              <Text style={{fontSize:26, paddingLeft:10, paddingRight:10}}>
-                Browse Matches
-              </Text>
-            </View>
-          </TouchableHighlight>          
-          <TouchableHighlight onPress={this.archivesBtnHandler} style={{paddingTop:10}}>
-            <View style={{borderRadius:10, borderWidth: 1}}>
-              <Text style={{fontSize:26, paddingLeft:10, paddingRight:10}}>
-                Archives
-              </Text>
-            </View>
-          </TouchableHighlight>
-          <TouchableHighlight onPress={this.changeTeamHandler} style={{paddingTop:10}}>
-            <View style={{borderRadius:10, borderWidth: 1}}>
-              <Text style={{fontSize:26, paddingLeft:10, paddingRight:10}}>
-                Change Team
-              </Text>
-            </View>
-          </TouchableHighlight>          
-        </View>
-      </View>
+      </ImageBackground>
     )
   }
 }

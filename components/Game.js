@@ -90,7 +90,7 @@ class Game extends Component {
   }
 
   setWinner(winner) {
-    if (this.props.myTeamId == this.props.awayTeam.teamId || this.props.myTeamId == this.props.homeTeam.teamId) {
+    if (!this.props.isComplete && this.props.myTeamId == this.props.awayTeam.teamId || this.props.myTeamId == this.props.homeTeam.teamId) {
       if (this.winner == winner) {
         winner = 'na'
       }

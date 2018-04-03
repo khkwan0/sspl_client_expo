@@ -227,6 +227,9 @@ class Match extends Component {
     })
   }
 
+  componentWillUnmount() {
+    this.props.navigation.state.params.scoreSheetReset()
+  }
   componentDidMount() {
     this.wsSetup()
     this.getGameData()

@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {ScrollView, View, AsyncStorage, TouchableHighlight, Text} from 'react-native'
+import {ScrollView, View, AsyncStorage, TouchableHighlight, Text, ActivityIndicator} from 'react-native'
 import Config from './Config'
 
 class ScoreSheets extends Component {
@@ -11,8 +11,10 @@ class ScoreSheets extends Component {
 
     this.getMatches = this.getMatches.bind(this)
     this.handleScoreSheetChosenBtn = this.handleScoreSheetChosenBtn.bind(this)
+    this.handleCameBack = this.handleCameBack.bind(this)
     this.state = {
-      matches: null
+      matches: null,
+      pressed: false
     }
     this.myTeamId = this.props.navigation.state.params.myTeamId
   }
@@ -61,11 +63,22 @@ class ScoreSheets extends Component {
   }
 
   handleScoreSheetChosenBtn(matchData) {
-    teams = this.props.navigation.state.params.teams  
-    homeTeam = teams.getTeam(matchData.homeTeamId)
-    awayTeam = teams.getTeam(matchData.awayTeamId)    
-    console.log(matchData)
-    this.props.navigation.navigate('Match', {matchData: matchData, homeTeam: homeTeam, awayTeam: awayTeam, myTeamId: this.props.navigation.state.params.myTeamId})
+    if (!this.state.pressed) {
+      teams = this.props.navigation.state.params.teams  
+      homeTeam = teams.getTeam(matchData.homeTeamId)
+      awayTeam = teams.getTeam(matchData.awayTeamId)    
+      console.log(matchData)
+      this.setState({
+        pressed: true
+      })
+      this.props.navigation.navigate('Match', {matchData: matchData, homeTeam: homeTeam, awayTeam: awayTeam, myTeamId: this.props.navigation.state.params.myTeamId, scoreSheetReset: this.handleCameBack})
+    }
+  }
+
+  handleCameBack() {
+    this.setState({
+      pressed: false
+    })
   }
 
   getMatches() {
@@ -155,6 +168,9 @@ class ScoreSheets extends Component {
           <View style={{flex:1, flexDirection: 'row', justifyContent:'center'}}>
             <Text style={{fontWeight: 'bold', fontSize: 24}}>Today: {today.toDateString()}</Text>
           </View>
+        </View>
+        <View>
+          <ActivityIndicator size="large" color="#0000ff" animating={this.state.pressed} />
         </View>
         <View style={{marginTop:20}}>              
           {rows}
