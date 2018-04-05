@@ -312,7 +312,9 @@ class Match extends Component {
   }
 
   componentWillUnmount() {
-    this.props.navigation.state.params.scoreSheetReset()
+    if (typeof this.props.navigation.state.params.scoreSheetReset != 'undefined') {
+      this.props.navigation.state.params.scoreSheetReset()
+    }
   }
 
   componentDidMount() {
