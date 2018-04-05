@@ -294,7 +294,7 @@ class HomeScreen extends Component {
   render() {
     const team = this.state.teamName
     return (
-      <ImageBackground source={require('../assets/splash.png')} style={{width: '100%', height: '100%'}}>
+      <ImageBackground source={require('../assets/balls.png')} style={{width: '100%', height: '100%'}}>
         <View style={{flex: .5, flexDirection:'column'}}>
           {!this.state.serverAlive &&      
             <View style={{flex: 1, flexDirection: 'row', justifyContent:'center'}}>

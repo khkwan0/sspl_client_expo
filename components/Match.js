@@ -33,6 +33,8 @@ class Match extends Component {
       homeConfirmBackgroundColor: 'white',
       awayConfirmBackgroundColor: 'white',
       isComplete: matchData.isComplete,
+      matchPointsHome: 0,
+      matchPointsAway: 0
 
     }
     this.setGameData = this.setGameData.bind(this)
@@ -47,6 +49,7 @@ class Match extends Component {
     this.homeTeamSubmit = this.homeTeamSubmit.bind(this)
     this.awayTeamSubmit = this.awayTeamSubmit.bind(this)
     this.nameSearch = this.nameSearch.bind(this)
+    this.countMatchPoints = this.countMatchPoints.bind(this)
   }
 
   wsSetup() {
@@ -63,10 +66,21 @@ class Match extends Component {
         if (msg.event == 'gamedata') {
           this.newArray = this.state.gameData
           this.newArray[msg.data.gameNo] = msg.data
+          let matchPointsHome = 0
+          let matchPointsAway = 0
+          if (this.state.matchType != 'nine') {
+            for (let i = 1; i < 6; i++) {  // magic number 6 is the number of sets in a non nineball match + 1
+              let setTally = this.countMatchPoints(i, this.newArray)
+              matchPointsHome += setTally.home
+              matchPointsAway += setTally.away
+            }  
+          }
           this.setState({
             gameData: this.newArray,
             homeCaptainSubmit: false,
-            awayCaptainSubmit: false
+            awayCaptainSubmit: false,
+            matchPointsHome: matchPointsHome,
+            matchPointsAway: matchPointsAway
           })
           AsyncStorage.setItem(gameDataStorageKey, JSON.stringify(this.state))
         }
@@ -89,6 +103,76 @@ class Match extends Component {
         }
       }
     })
+  }
+
+  countMatchPoints(setNumber, _gameData) {
+
+    let tempHomeSetScore = 0
+    let tempAwaySetScore = 0
+    let matchPointsAway = 0
+    let matchPointsHome = 0
+    let numberOfGames = 5
+    let startingGameNumber = 0
+
+    if (setNumber % 2) {
+      numberOfGames = 4
+    }
+
+    if (setNumber == 1) {
+      startingGameNumber = 1
+    } else if (setNumber == 2) {
+      startingGameNumber = 5
+    } else if (setNumber == 3) {
+      startingGameNumber = 10
+    } else if (setNumber == 4) {
+      startingGameNumber = 14
+    } else if (setNumber == 5) {
+      startingGameNumber = 19
+      if (this.state.matchType == 'eight') {
+        numberOfGames = 1
+      }
+    }
+    console.log(numberOfGames)
+    if (startingGameNumber == 19) {
+      for (let i = startingGameNumber; i < startingGameNumber + numberOfGames; i++) {
+        if (typeof _gameData[i] != 'undefined' && _gameData[i] && _gameData[i].winner == 'home') {
+          matchPointsHome++
+        }
+        if (typeof _gameData[i] != 'undefined' && _gameData[i] && _.gameData[i].winner == 'away') {
+          matchPointsAway++
+        }
+      }
+    } else {
+      for (let i = startingGameNumber; i < (startingGameNumber + numberOfGames); i++) {
+        if (typeof _gameData[i] != 'undefined' && _gameData[i]) {
+          console.log(_gameData[i].winner)
+          if (_gameData[i].winner == 'home') {
+            tempHomeSetScore++
+          }
+          if (_gameData[i].winner == 'away') {
+            tempAwaySetScore++
+          }
+        }
+      }
+      if ((tempHomeSetScore + tempAwaySetScore) == 4 && numberOfGames == 4) {
+        if (tempHomeSetScore == tempAwaySetScore) {
+          matchPointsAway++
+          matchPointsHome++
+        } else if (tempHomeSetScore > tempAwaySetScore) {
+          matchPointsHome += 2
+        } else {
+          matchPointsAway += 2
+        }
+      } else if ((tempHomeSetScore + tempAwaySetScore) == 5 && numberOfGames == 5) {
+        if (tempHomeSetScore > tempAwaySetScore) {
+          matchPointsHome += 3
+        } else {
+          matchPointsAway += 3
+        }
+      }
+    }
+    console.log('matchpointshome: '+ matchPointsHome)
+    return {home: matchPointsHome, away: matchPointsAway}
   }
 
   nameSearch(name, knownNamesCallBack) {
@@ -230,21 +314,35 @@ class Match extends Component {
   componentWillUnmount() {
     this.props.navigation.state.params.scoreSheetReset()
   }
+
   componentDidMount() {
     this.wsSetup()
     this.getGameData()
     .then((_gameData) => {
+      let matchPointsHome = 0
+      let matchPointsAway = 0
+      if (this.state.matchType != 'nine') {
+        for (let i = 1; i < 6; i++) {  // magic number 6 is the number of sets in a non nineball match + 1
+          let setTally = this.countMatchPoints(i, _gameData)
+          matchPointsHome += setTally.home
+          matchPointsAway += setTally.away
+        }  
+      }
       this.getPlayerData()
       .then((_players) => {
         this.setState({
           players: _players,
-          gameData: _gameData
+          gameData: _gameData,
+          matchPointsHome: matchPointsHome,
+          matchPointsAway: matchPointsAway
         })
       })
       .catch((err) => {        
         console.log(err)
         this.setState({
-          gameData:_gameData
+          gameData:_gameData,
+          matchPointsHome: matchPointsHome,
+          matchPointsAway: matchPointsAway
         })
       })
     })
@@ -265,15 +363,26 @@ class Match extends Component {
     gameDataMsg = gameData
     gameDataMsg.matchId = matchData.matchId
     this.socket.emit('message', {event: 'gamedata', data: {room: 'match'+matchData.matchId, gameData: gameDataMsg}})
+    newArray = this.state.gameData
+    newArray[gameData.gameNo] = gameData
+    let matchPointsHome = 0
+    let matchPointsAway = 0
+    if (this.state.matchType != 'nine') {
+      for (let i = 1; i < 6; i++) {  // magic number 6 is the number of sets in a non nineball match + 1
+        let setTally = this.countMatchPoints(i, newArray)
+        matchPointsHome += setTally.home
+        matchPointsAway += setTally.away
+      }  
+    }
+    this.setState({
+      gameData: newArray,
+      awayCaptainSubmit: false,
+      homeCaptainSubmit: false,
+      matchPointsHome: matchPointsHome,
+      matchPointsAway: matchPointsAway
+    })
     if (!this.socket.connected) {
       console.log('not connected')
-      newArray = this.state.gameData
-      newArray[gameData.gameNo] = gameData
-      this.setState({
-        gameData: newArray,
-        awayCaptainSubmit: false,
-        homeCaptainSubmit: false
-      })
       AsyncStorage.setItem(gameDataStorageKey, JSON.stringify(this.state))
     }
   }
@@ -297,6 +406,7 @@ class Match extends Component {
   render() {
     let homeTeam = this.props.navigation.state.params.homeTeam
     let awayTeam = this.props.navigation.state.params.awayTeam
+    console.log(this.state.matchType)
     if (this.state.matchType == 'nine') {
       toRender = (
         <View>
@@ -405,11 +515,226 @@ class Match extends Component {
             />                        
         </View>
       )
-    } else {
+    }
+    if (this.state.matchType == 'eight') {
       toRender = (
         <View>
+          <View style={{flex: 1, alignItems: 'center'}}>
+            <View>
+              <Text style={{fontSize: 16}}>{this.state.matchDate.toDateString()}</Text>
+            </View>
+            <View>
+              <Text style={{fontSize:20}}>Eight Ball</Text>
+            </View>
+            <View>
+              <Text style={{fontSize:16}}>Round {this.state.round}</Text>
+            </View>
+          </View>
+          <View style={styles.matchMetaData}>
+            <View>
+              <Text style={{fontSize: 18}}>Home: {this.state.homeTeam.teamName}</Text>
+            </View>
+            <View>
+              <Text style={{fontSize: 18}}>Away: {this.state.awayTeam.teamName}</Text>
+            </View>
+          </View>
+          <Set 
+            setGameData={this.setGameData}
+            gameData={this.state.gameData} 
+            players={this.players}
+            homeTeam={this.state.homeTeam}
+            awayTeam={this.state.awayTeam}
+            setNumber={1} 
+            type={2}
+            numGames={4}
+            startingGameNo={1}
+            isComplete={this.state.isComplete}
+            nameSearch={this.nameSearch}
+            myTeamId={this.myTeamId}
+            gameType='eight'
+            matchPointsAway={this.state.matchPointsAway}
+            matchPointsHome={this.state.matchPointsHome}
+            />
+          <Set
+            setGameData={this.setGameData}
+            gameData={this.state.gameData}
+            players={this.players}
+            homeTeam={this.state.homeTeam}
+            awayTeam={this.state.awayTeam}
+            setNumber={2}
+            type={1}
+            numGames={5} 
+            startingGameNo={5}
+            isComplete={this.state.isComplete}
+            nameSearch={this.nameSearch}
+            myTeamId={this.myTeamId}
+            gameType='eight'
+            matchPointsAway={this.state.matchPointsAway}
+            matchPointsHome={this.state.matchPointsHome}
+            />
+          <Set 
+            setGameData={this.setGameData}
+            gameData={this.state.gameData} 
+            players={this.players}
+            homeTeam={this.state.homeTeam}
+            awayTeam={this.state.awayTeam}
+            setNumber={3} 
+            type={2}
+            numGames={4}
+            startingGameNo={10}
+            isComplete={this.state.isComplete}
+            nameSearch={this.nameSearch}
+            myTeamId={this.myTeamId}
+            gameType='eight'
+            matchPointsAway={this.state.matchPointsAway}
+            matchPointsHome={this.state.matchPointsHome}
+            />
+          <Set
+            setGameData={this.setGameData}
+            gameData={this.state.gameData}
+            players={this.players}
+            homeTeam={this.state.homeTeam}
+            awayTeam={this.state.awayTeam}
+            setNumber={4}
+            type={1}
+            numGames={5} 
+            startingGameNo={14}
+            isComplete={this.state.isComplete}
+            nameSearch={this.nameSearch}
+            myTeamId={this.myTeamId}
+            gameType='eight'
+            matchPointsAway={this.state.matchPointsAway}
+            matchPointsHome={this.state.matchPointsHome}
+            />
+          <Set 
+            setGameData={this.setGameData}
+            gameData={this.state.gameData} 
+            players={this.players}
+            homeTeam={this.state.homeTeam}
+            awayTeam={this.state.awayTeam}
+            setNumber={5} 
+            type={2}
+            numGames={1}
+            startingGameNo={19}
+            isComplete = {this.state.isComplete}
+            nameSearch={this.nameSearch}
+            myTeamId={this.myTeamId}
+            gameType='eight'
+            matchPointsAway={this.state.matchPointsAway}
+            matchPointsHome={this.state.matchPointsHome}
+            />
         </View>
       )
+    }
+    if (this.state.matchType == 'mixed') {
+      toRender = (
+        <View>
+          <View style={{flex: 1, alignItems: 'center'}}>
+            <View>
+              <Text style={{fontSize: 16}}>{this.state.matchDate.toDateString()}</Text>
+            </View>
+            <View>
+              <Text style={{fontSize:20}}>Mixed</Text>
+            </View>
+            <View>
+              <Text style={{fontSize:16}}>Round {this.state.round}</Text>
+            </View>
+          </View>
+          <View style={styles.matchMetaData}>
+            <View>
+              <Text style={{fontSize: 18}}>Home: {this.state.homeTeam.teamName}</Text>
+            </View>
+            <View>
+              <Text style={{fontSize: 18}}>Away: {this.state.awayTeam.teamName}</Text>
+            </View>
+          </View>
+          <Set 
+            setGameData={this.setGameData}
+            gameData={this.state.gameData} 
+            players={this.players}
+            homeTeam={this.state.homeTeam}
+            awayTeam={this.state.awayTeam}
+            setNumber={1} 
+            type={2}
+            numGames={4}
+            startingGameNo={1}
+            isComplete={this.state.isComplete}
+            nameSearch={this.nameSearch}
+            myTeamId={this.myTeamId}
+            gameType='m_eight'
+            matchPointsAway={this.state.matchPointsAway}
+            matchPointsHome={this.state.matchPointsHome}
+            />
+          <Set
+            setGameData={this.setGameData}
+            gameData={this.state.gameData}
+            players={this.players}
+            homeTeam={this.state.homeTeam}
+            awayTeam={this.state.awayTeam}
+            setNumber={2}
+            type={1}
+            numGames={5} 
+            startingGameNo={5}
+            isComplete={this.state.isComplete}
+            nameSearch={this.nameSearch}
+            myTeamId={this.myTeamId}
+            gameType='m_eight'
+            matchPointsAway={this.state.matchPointsAway}
+            matchPointsHome={this.state.matchPointsHome}
+            />
+          <Set 
+            setGameData={this.setGameData}
+            gameData={this.state.gameData} 
+            players={this.players}
+            homeTeam={this.state.homeTeam}
+            awayTeam={this.state.awayTeam}
+            setNumber={3} 
+            type={2}
+            numGames={4}
+            startingGameNo={10}
+            isComplete={this.state.isComplete}
+            nameSearch={this.nameSearch}
+            myTeamId={this.myTeamId}
+            gameType='m_nine'
+            matchPointsAway={this.state.matchPointsAway}
+            matchPointsHome={this.state.matchPointsHome}
+            />
+          <Set
+            setGameData={this.setGameData}
+            gameData={this.state.gameData}
+            players={this.players}
+            homeTeam={this.state.homeTeam}
+            awayTeam={this.state.awayTeam}
+            setNumber={4}
+            type={1}
+            numGames={5} 
+            startingGameNo={14}
+            isComplete={this.state.isComplete}
+            nameSearch={this.nameSearch}
+            myTeamId={this.myTeamId}
+            gameType='m_nine'
+            matchPointsAway={this.state.matchPointsAway}
+            matchPointsHome={this.state.matchPointsHome}
+            />
+          <Set 
+            setGameData={this.setGameData}
+            gameData={this.state.gameData} 
+            players={this.players}
+            homeTeam={this.state.homeTeam}
+            awayTeam={this.state.awayTeam}
+            setNumber={5} 
+            type={2}
+            numGames={5}
+            startingGameNo={19}
+            isComplete = {this.state.isComplete}
+            nameSearch={this.nameSearch}
+            myTeamId={this.myTeamId}
+            gameType='m_wild'
+            matchPointsAway={this.state.matchPointsAway}
+            matchPointsHome={this.state.matchPointsHome}
+            />
+        </View>
+      )      
     }
     if (this.myTeamId == homeTeam.teamId) {      
       homeConfirmBackgroundColor = this.state.homeCaptainSubmit? 'green' : 'yellow'

@@ -114,7 +114,33 @@ class ScoreSheets extends Component {
       this.state.matches.map((aMatch, i) => {
         aMatch.matchDate.setHours(0,0,0,0)
         homeTeam = teams.getTeam(aMatch.homeTeamId)        
-        awayTeam = teams.getTeam(aMatch.awayTeamId)      
+        awayTeam = teams.getTeam(aMatch.awayTeamId)
+        if (awayTeam && homeTeam && aMatch.matchDate < today && (aMatch.homeTeamId == this.myTeamId || aMatch.awayTeamId == this.myTeamId) && !aMatch.isComplete) {
+          var gameTitle = awayTeam.teamName + ' VS @' + homeTeam.teamName
+          rows.push(
+            <View key={i} style={{backgroundColor: 'rgba(128, 128, 128, .5)', borderRadius:10, borderWidth: 1}}>
+              <TouchableHighlight onPress={()=>this.handleScoreSheetChosenBtn(aMatch)}>
+                <View>                
+                  <View>
+                    <Text style={{color:'white'}}>
+                      {aMatch.matchDate.toDateString()}
+                    </Text>
+                  </View>
+                  <View>
+                    <Text style={{color:'yellow'}}>
+                      Incomplete
+                    </Text>
+                  </View>
+                  <View>
+                    <Text style={{color:'white', fontSize:26, paddingLeft:10, paddingRight:10}}>
+                      {gameTitle}
+                    </Text>
+                  </View>
+                </View>
+              </TouchableHighlight>
+            </View>
+          )
+        }
         if (awayTeam && homeTeam && aMatch.matchDate.toDateString() == today.toDateString() && (aMatch.homeTeamId == this.myTeamId || aMatch.awayTeamId == this.myTeamId)) {          
           var gameTitle = awayTeam.teamName + ' VS @' + homeTeam.teamName
           rows.push(
